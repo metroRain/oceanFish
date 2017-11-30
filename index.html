@@ -80,7 +80,7 @@
 
     // call api to determine the date of love or not
     $.ajax({
-      url: "http://localhost:8080/getLove",
+      url: "http://localhost:4000/getLove",
       method: "get",
       success: function (data) {
         if (data.successful) {
@@ -266,7 +266,7 @@
 
   function setLove() {
     $.ajax({
-      url: "http://localhost:8080/setLove",
+      url: "http://localhost:4000/setLove",
       method: "get",
       success: function (data) {
         if (data.successful) {
@@ -304,7 +304,7 @@
     together.setFullYear(year, month, day); 			// year : month : day
     together.setHours(hour);						    // hour
     together.setMinutes(min);					        // min
-    together.setSeconds(sec);					        // second
+    together.setSeconds(sec - 1);					    // second
 
     $("#clock-box").fadeIn(800);
     while (true) {
