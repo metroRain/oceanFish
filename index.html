@@ -80,29 +80,23 @@
 
     // call api to determine the date of love or not
     $.ajax({
-      url: "http://www.于静娴.xyz:4000/getLove",
+      url: "http://localhost:4000/getLove",
       method: "get",
       success: function (data) {
-        if (data.successful) {
-          if (data.year !== null && data.year !== "") {
-            // hide button
-            $("#setLoveButton").hide();
-            loveHasStarted = true;
+        if (null !== data && data.successful) {
+          // hide button
+          $("#setLoveButton").hide();
+          loveHasStarted = true;
 
-            year = data.year === null || data.year === "" ? -1 : parseInt(data.year);
-            month = data.month === null || data.month === "" ? -1 : parseInt(data.month) - 1;
-            day = data.day === null || data.day === "" ? -1 : parseInt(data.day);
-            hour = data.hour === null || data.hour === "" ? -1 : parseInt(data.hour);
-            min = data.min === null || data.min === "" ? -1 : parseInt(data.minute);
-            sec = data.sec === null || data.sec === "" ? -1 : parseInt(data.second);
+          year = parseInt(data.year);
+          month = parseInt(data.month) - 1;
+          day = parseInt(data.day);
+          hour = parseInt(data.hour);
+          min = parseInt(data.minute);
+          sec = parseInt(data.second);
 
-            if (year === -1 || month === -1 || day === -1 || hour === -1 || min === -1 || sec === -1) {
-              return;
-            }
-
-            var met = document.getElementById("love");
-            met.innerText = "已经相恋了";
-          }
+          var met = document.getElementById("love");
+          met.innerText = "已经相恋了";
         }
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -262,14 +256,19 @@
     }));
 
     runAsync().start();
+
+    if(!loveHasStarted) {
+      detect();
+    }
+
   })();
 
   function setLove() {
     $.ajax({
-      url: "http://www.于静娴.xyz:4000/setLove",
+      url: "http://localhost:4000/setLove",
       method: "get",
       success: function (data) {
-        if (data.successful) {
+        if (null !== data && data.successful) {
           if (!loveHasStarted) {
             // hide button
             $("#setLoveButton").hide();
@@ -277,16 +276,12 @@
             var met = document.getElementById("love");
             met.innerText = "已经相恋了";
             //
-            var year = data.year === null || data.year === "" ? -1 : parseInt(data.year);
-            var month = data.month === null || data.month === "" ? -1 : parseInt(data.month) - 1;
-            var day = data.day === null || data.day === "" ? -1 : parseInt(data.day);
-            var hour = data.hour === null || data.hour === "" ? -1 : parseInt(data.hour);
-            var min = data.min === null || data.min === "" ? -1 : parseInt(data.minute);
-            var sec = data.sec === null || data.sec === "" ? -1 : parseInt(data.second);
-
-            if (year === -1 || month === -1 || day === -1 || hour === -1 || min === -1 || sec === -1) {
-              return;
-            }
+            var year = parseInt(data.year);
+            var month = parseInt(data.month) - 1;
+            var day = parseInt(data.day);
+            var hour = parseInt(data.hour);
+            var min = parseInt(data.minute);
+            var sec = parseInt(data.second);
 
             metStop = true;
             timeStart(year, month, day, hour, min, sec).start();
@@ -297,14 +292,48 @@
         console.log("api got an error: " + errorThrown);
       }
     });
-  };
+  }
+
+  function detect() {
+    setInterval(function () {
+      if (!loveHasStarted) {
+        $.ajax({
+          url: "http://localhost:4000/getLove",
+          method: "get",
+          success: function (data) {
+            if (null !== data && data.successful) {
+              // hide button
+              $("#setLoveButton").hide();
+              loveHasStarted = true;
+              metStop = true;
+
+              year = parseInt(data.year);
+              month = parseInt(data.month) - 1;
+              day = parseInt(data.day);
+              hour = parseInt(data.hour);
+              min = parseInt(data.minute);
+              sec = parseInt(data.second);
+
+              var met = document.getElementById("love");
+              met.innerText = "已经相恋了";
+
+              timeStart(year, month, day, hour, min, sec).start();
+            }
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log("api got an error: " + errorThrown);
+          }
+        });
+      }
+    }, 3000)
+  }
 
   var timeStart = eval(Jscex.compile("async", function (year, month, day, hour, min, sec) {
     var together = new Date();
     together.setFullYear(year, month, day); 			// year : month : day
     together.setHours(hour);						    // hour
     together.setMinutes(min);					        // min
-    together.setSeconds(sec - 1);					    // second
+    together.setSeconds(sec + 1);					    // second
 
     $("#clock-box").fadeIn(800);
     while (true) {
