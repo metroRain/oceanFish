@@ -27,7 +27,6 @@
 </head>
 <body>
 <div id="main">
-    <!-- <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(<a href="http://www.google.cn/chrome/intl/zh-CN/landing_chrome.html?hl=zh-CN&brand=CHMI">Chrome</a>)或者火狐(<a href="http://firefox.com.cn/download/">Firefox</a>)浏览器，或者其他游览器的最新版本。</div> -->
     <div id="wrap">
         <div id="text">
             <div id="code">
@@ -325,7 +324,7 @@
           }
         });
       }
-    }, 3000)
+    }, 2000)
   }
 
   var timeStart = eval(Jscex.compile("async", function (year, month, day, hour, min, sec) {
@@ -333,7 +332,8 @@
     together.setFullYear(year, month, day); 			// year : month : day
     together.setHours(hour);						    // hour
     together.setMinutes(min);					        // min
-    together.setSeconds(sec + 1);					    // second
+    together.setSeconds(sec);                           // second
+    together.setMilliseconds(-1001);
 
     $("#clock-box").fadeIn(800);
     while (true) {
